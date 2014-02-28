@@ -6,6 +6,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.microedition.khronos.egl.EGLConfig;
+import javax.microedition.khronos.opengles.GL10;
+
 import net.osmand.PlatformUtil;
 import net.osmand.access.AccessibilityActionsProvider;
 import net.osmand.access.AccessibleToast;
@@ -37,6 +40,8 @@ import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.PointF;
 import android.graphics.RectF;
+import android.opengl.GLES20;
+import android.opengl.GLSurfaceView;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
@@ -53,7 +58,7 @@ import android.view.SurfaceView;
 import android.view.WindowManager;
 import android.widget.Toast;
 
-public class OsmandMapTileView extends SurfaceView implements IMapDownloaderCallback, Callback {
+public class OsmandMapTileView extends GLSurfaceView implements IMapDownloaderCallback, Callback {
 
 	private static final int MAP_REFRESH_MESSAGE = OsmAndConstants.UI_HANDLER_MAP_VIEW + 4;
 	private static final int BASE_REFRESH_MESSAGE = OsmAndConstants.UI_HANDLER_MAP_VIEW + 3;
@@ -214,6 +219,30 @@ public class OsmandMapTileView extends SurfaceView implements IMapDownloaderCall
 		currentViewport = new RotatedTileBox.RotatedTileBoxBuilder().
 				setLocation(0, 0).setZoomAndScale(3, 0).setPixelDimensions(getWidth(), getHeight()).build();
 		currentViewport.setDensity(dm.density);
+		
+		setEGLContextClientVersion(2);
+		setRenderer(new OsmAndGLRenderer());
+	}
+	
+	public class OsmAndGLRenderer implements Renderer {
+
+		@Override
+		public void onSurfaceCreated(GL10 gl, EGLConfig config) {
+			// Set the background frame color
+	        GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		}
+
+		@Override
+		public void onSurfaceChanged(GL10 gl, int width, int height) {
+			  // Redraw background color
+	        GLES20.glViewport(0, 0, width, height);
+		}
+
+		@Override
+		public void onDrawFrame(GL10 gl) {
+			GLES20.glClearColor(0, 1, 0, 0);
+			GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
+		}
 		
 	}
 
