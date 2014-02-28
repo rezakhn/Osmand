@@ -54,7 +54,6 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceHolder.Callback;
-import android.view.SurfaceView;
 import android.view.WindowManager;
 import android.widget.Toast;
 
@@ -224,23 +223,27 @@ public class OsmandMapTileView extends GLSurfaceView implements IMapDownloaderCa
 		setRenderer(new OsmAndGLRenderer());
 	}
 	
+	private GL10 gl;
 	public class OsmAndGLRenderer implements Renderer {
+
 
 		@Override
 		public void onSurfaceCreated(GL10 gl, EGLConfig config) {
+			OsmandMapTileView.this.gl = gl;
 			// Set the background frame color
 	        GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		}
 
 		@Override
 		public void onSurfaceChanged(GL10 gl, int width, int height) {
+			OsmandMapTileView.this.gl = gl;
 			  // Redraw background color
 	        GLES20.glViewport(0, 0, width, height);
 		}
 
 		@Override
 		public void onDrawFrame(GL10 gl) {
-			GLES20.glClearColor(0, 1, 0, 0);
+			GLES20.glClearColor(0, 1, 0, 0.2f);
 			GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
 		}
 		
@@ -248,16 +251,19 @@ public class OsmandMapTileView extends GLSurfaceView implements IMapDownloaderCa
 
 	@Override
 	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+		super.surfaceChanged(holder, format, width, height);
 		refreshMap();
 	}
 
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
+		super.surfaceCreated(holder);
 		refreshMap();
 	}
 
 	@Override
 	public void surfaceDestroyed(SurfaceHolder holder) {
+		super.surfaceDestroyed(holder);
 	}
 
 	@Override
@@ -443,6 +449,7 @@ public class OsmandMapTileView extends GLSurfaceView implements IMapDownloaderCa
 		if(tileBox.getPixHeight() == 0 || tileBox.getPixWidth() == 0){
 			return;
 		}
+		
 		if(bufferBitmapTmp == null || tileBox.getPixHeight() != bufferBitmapTmp.getHeight()
 				|| tileBox.getPixWidth() != bufferBitmapTmp.getWidth()) {
 			bufferBitmapTmp = Bitmap.createBitmap(tileBox.getPixWidth(), tileBox.getPixHeight(), Config.RGB_565);
@@ -477,6 +484,7 @@ public class OsmandMapTileView extends GLSurfaceView implements IMapDownloaderCa
 
 	private void refreshMapInternal(DrawSettings drawSettings) {
 		handler.removeMessages(MAP_REFRESH_MESSAGE);
+		requestRender();
 		SurfaceHolder holder = getHolder();
 		long ms = SystemClock.elapsedRealtime();
 		synchronized (holder) {
