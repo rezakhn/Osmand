@@ -6,9 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.microedition.khronos.egl.EGLConfig;
-import javax.microedition.khronos.opengles.GL10;
-
 import net.osmand.PlatformUtil;
 import net.osmand.access.AccessibilityActionsProvider;
 import net.osmand.access.AccessibleToast;
@@ -40,8 +37,6 @@ import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.PointF;
 import android.graphics.RectF;
-import android.opengl.GLES20;
-import android.opengl.GLSurfaceView;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
@@ -54,10 +49,11 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceHolder.Callback;
+import android.view.SurfaceView;
 import android.view.WindowManager;
 import android.widget.Toast;
 
-public class OsmandMapTileView extends GLSurfaceView implements IMapDownloaderCallback, Callback {
+public class OsmandMapTileView extends SurfaceView implements IMapDownloaderCallback, Callback {
 
 	private static final int MAP_REFRESH_MESSAGE = OsmAndConstants.UI_HANDLER_MAP_VIEW + 4;
 	private static final int BASE_REFRESH_MESSAGE = OsmAndConstants.UI_HANDLER_MAP_VIEW + 3;
@@ -219,51 +215,23 @@ public class OsmandMapTileView extends GLSurfaceView implements IMapDownloaderCa
 				setLocation(0, 0).setZoomAndScale(3, 0).setPixelDimensions(getWidth(), getHeight()).build();
 		currentViewport.setDensity(dm.density);
 		
-		setEGLContextClientVersion(2);
-		setRenderer(new OsmAndGLRenderer());
 	}
 	
-	private GL10 gl;
-	public class OsmAndGLRenderer implements Renderer {
-
-
-		@Override
-		public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-			OsmandMapTileView.this.gl = gl;
-			// Set the background frame color
-	        GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-		}
-
-		@Override
-		public void onSurfaceChanged(GL10 gl, int width, int height) {
-			OsmandMapTileView.this.gl = gl;
-			  // Redraw background color
-	        GLES20.glViewport(0, 0, width, height);
-		}
-
-		@Override
-		public void onDrawFrame(GL10 gl) {
-			GLES20.glClearColor(0, 1, 0, 0.2f);
-			GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
-		}
-		
-	}
-
 	@Override
 	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-		super.surfaceChanged(holder, format, width, height);
+//		super.surfaceChanged(holder, format, width, height);
 		refreshMap();
 	}
 
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
-		super.surfaceCreated(holder);
+//		super.surfaceCreated(holder);
 		refreshMap();
 	}
 
 	@Override
 	public void surfaceDestroyed(SurfaceHolder holder) {
-		super.surfaceDestroyed(holder);
+//		super.surfaceDestroyed(holder);
 	}
 
 	@Override
@@ -484,7 +452,7 @@ public class OsmandMapTileView extends GLSurfaceView implements IMapDownloaderCa
 
 	private void refreshMapInternal(DrawSettings drawSettings) {
 		handler.removeMessages(MAP_REFRESH_MESSAGE);
-		requestRender();
+		//GLView.requestRender();
 		SurfaceHolder holder = getHolder();
 		long ms = SystemClock.elapsedRealtime();
 		synchronized (holder) {
