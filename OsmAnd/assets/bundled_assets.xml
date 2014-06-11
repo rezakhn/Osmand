@@ -38,7 +38,7 @@
 	<asset source="voice/it/config.p" destination="voice/it/_config.p" mode="overwriteOnlyIfExists" />
 	<asset source="voice/pt/config.p" destination="voice/pt/_config.p" mode="overwriteOnlyIfExists" />
 	<asset source="voice/ru/config.p" destination="voice/ru/_config.p" mode="overwriteOnlyIfExists" />
-	
+	<asset source="voice/fa/config.p" destination="voice/fa/_config.p" mode="overwriteOnlyIfExists" />
 	
 	<!-- TODO delete deprecated -->
 	<asset source="voice/fr-ov/config.p" destination="voice/fr/_config.p" mode="overwriteOnlyIfExists" />
